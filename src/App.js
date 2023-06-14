@@ -1,24 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react';
+import styles from './App.module.scss';
 
 function App() {
+  const [quote, setQuote] = useState({text: 'Failed to fetch a quote.', author: 'Error'});
+
+  const fetchQuote = async () => {
+    const res = await fetch('https://type.fit/api/quotes');
+    const data = await res.json();
+    setQuote(data[Math.floor(Math.random() * data.length)]);
+  };
+
+  useEffect(() => {
+    fetchQuote();
+    console.log(1);
+    return function cleanup() {
+      console.log(2)
+      setQuote(0)
+    }
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main className={styles.wholeAppComponent}>
+      <div className={styles.flexbox2}>
+        <section className={styles.generatorSection}>
+          <p>{quote.text}</p>
+          <p>by {quote.author}</p>
+          <button type="button" onClick={fetchQuote}>New Quote</button>
+        </section>
+      </div>
+    </main>
   );
 }
 
